@@ -1,92 +1,239 @@
-@extends('layout')
+<!DOCTYPE html>
+<html lang="en">
 
-@section('content')
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<div class="card shadow border-0">
+    <title>Task Manager</title>
 
-    <div class="card-body">
+    <!-- Bootstrap 5 -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+</head>
 
-        <div class="table-responsive">
+<body class="bg-light">
 
-            <table class="table table-hover align-middle">
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark bg-primary shadow-sm">
+        <div class="container">
 
-                <thead class="table-dark">
-                    <tr>
-                        <th>ID</th>
-                        <th>Title</th>
-                        <th>Description</th>
-                        <th>Status</th>
-                        <th width="180">Action</th>
-                    </tr>
-                </thead>
+            <a class="navbar-brand fw-bold" href="{{ route('tasks.index') }}">
+                Task Manager
+            </a>
 
-                <tbody>
+            <a
+                href="{{ route('tasks.create') }}"
+                class="btn btn-light"
+            >
+                + Add Task
+            </a>
 
-                    <tr>
-                        <td>1</td>
+        </div>
+    </nav>
 
-                        <td>
-                            <strong>Complete Laravel Project</strong>
-                        </td>
 
-                        <td>
-                            Create a Laravel CRUD application
-                        </td>
+    <!-- Main Content -->
+    <div class="container py-5">
 
-                        <td>
-                            <span class="badge bg-warning text-dark">
-                                In Progress
-                            </span>
-                        </td>
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
 
-                        <td>
-                            <div class="btn-group">
-                                <a href="#" class="btn btn-info btn-sm">
-                                    Show
-                                </a>
+            <div>
+                <h1 class="fw-bold mb-1">My Tasks</h1>
 
-                                <a href="#" class="btn btn-warning btn-sm">
-                                    Edit
-                                </a>
+                <p class="text-muted mb-0">
+                    Manage your tasks easily
+                </p>
+            </div>
 
-                                <button class="btn btn-danger btn-sm">
-                                    Delete
-                                </button>
-                            </div>
-                        </td>
-
-                    </tr>
-
-                </tbody>
-
-            </table>
+            <a
+                href="{{ route('tasks.create') }}"
+                class="btn btn-primary"
+            >
+                + Create Task
+            </a>
 
         </div>
 
+
+        <!-- Success Message -->
+        @if(session('success'))
+
+            <div class="alert alert-success alert-dismissible fade show">
+
+                {{ session('success') }}
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                ></button>
+
+            </div>
+
+        @endif
+
+
+        <!-- Validation Errors -->
+        @if($errors->any())
+
+            <div class="alert alert-danger">
+
+                <ul class="mb-0">
+
+                    @foreach($errors->all() as $error)
+
+                        <li>{{ $error }}</li>
+
+                    @endforeach
+
+                </ul>
+
+            </div>
+
+        @endif
+
+
+        @if($tasks->count())
+
+            <div class="row g-4">
+
+                @foreach($tasks as $task)
+
+                    <div class="col-md-6 col-lg-4">
+
+                        <div class="card h-100 border-0 shadow-sm">
+
+                            <div class="card-body d-flex flex-column">
+
+                                <!-- Title + Status -->
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+
+                                    <h5 class="card-title fw-bold mb-0">
+                                        {{ $task->title }}
+                                    </h5>
+
+                                    @if($task->status === 'completed')
+
+                                        <span class="badge bg-success">
+                                            Completed
+                                        </span>
+
+                                    @else
+
+                                        <span class="badge bg-warning text-dark">
+                                            Pending
+                                        </span>
+
+                                    @endif
+
+                                </div>
+
+
+                                <!-- Description -->
+                                <p class="card-text text-muted">
+
+                                    {{ $task->description ?: 'No description provided.' }}
+
+                                </p>
+
+
+                                <!-- Created -->
+                                <small class="text-muted mb-3">
+
+                                    Created:
+                                    {{ $task->created_at->format('M d, Y') }}
+
+                                </small>
+
+
+                                <!-- Buttons -->
+                                <div class="mt-auto d-flex gap-2">
+
+                                    <a
+                                        href="{{ route('tasks.show', $task) }}"
+                                        class="btn btn-outline-primary btn-sm"
+                                    >
+                                        View
+                                    </a>
+
+                                    <a
+                                        href="{{ route('tasks.edit', $task) }}"
+                                        class="btn btn-outline-secondary btn-sm"
+                                    >
+                                        Edit
+                                    </a>
+
+                                    <form
+                                        action="{{ route('tasks.destroy', $task) }}"
+                                        method="POST"
+                                        class="d-inline"
+                                    >
+
+                                        @csrf
+
+                                        @method('DELETE')
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-outline-danger btn-sm"
+                                            onclick="return confirm('Are you sure you want to delete this task?')"
+                                        >
+                                            Delete
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                @endforeach
+
+            </div>
+
+        @else
+
+            <!-- Empty State -->
+            <div class="card border-0 shadow-sm text-center">
+
+                <div class="card-body py-5">
+
+                    <h3 class="fw-bold">
+                        No tasks yet
+                    </h3>
+
+                    <p class="text-muted">
+                        Create your first task to get started.
+                    </p>
+
+                    <a
+                        href="{{ route('tasks.create') }}"
+                        class="btn btn-primary"
+                    >
+                        + Create Task
+                    </a>
+
+                </div>
+
+            </div>
+
+        @endif
+
     </div>
 
-</div>
 
-<nav class="mt-4">
-    <ul class="pagination justify-content-center">
+    <!-- Bootstrap JS -->
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    ></script>
 
-        <li class="page-item disabled">
-            <a class="page-link">Previous</a>
-        </li>
-
-        <li class="page-item active">
-            <a class="page-link">1</a>
-        </li>
-
-        <li class="page-item">
-            <a class="page-link">2</a>
-        </li>
-
-        <li class="page-item">
-            <a class="page-link">Next</a>
-        </li>
-
-    </ul>
-</nav>
-
-@endsection
+</body>
+</html>

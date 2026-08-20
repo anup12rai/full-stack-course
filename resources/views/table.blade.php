@@ -1,92 +1,124 @@
-@extends('layout')
+<!DOCTYPE html>
+<html lang="en">
 
-@section('content')
+<head>
+    <meta charset="UTF-8">
 
-<div class="card shadow border-0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <div class="card-body">
+    <title>Task Management</title>
 
-        <div class="table-responsive">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+</head>
 
-            <table class="table table-hover align-middle">
+<body>
 
-                <thead class="table-dark">
-                    <tr>
-                        <th>ID</th>
-                        <th>Title</th>
-                        <th>Description</th>
-                        <th>Status</th>
-                        <th width="180">Action</th>
-                    </tr>
-                </thead>
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container">
 
-                <tbody>
+            <a class="navbar-brand"
+               href="{{ route('tasks.index') }}">
+                Task Management
+            </a>
 
-                    <tr>
-                        <td>1</td>
-
-                        <td>
-                            <strong>Complete Laravel Project</strong>
-                        </td>
-
-                        <td>
-                            Create a Laravel CRUD application
-                        </td>
-
-                        <td>
-                            <span class="badge bg-warning text-dark">
-                                In Progress
-                            </span>
-                        </td>
-
-                        <td>
-                            <div class="btn-group">
-                                <a href="#" class="btn btn-info btn-sm">
-                                    Show
-                                </a>
-
-                                <a href="#" class="btn btn-warning btn-sm">
-                                    Edit
-                                </a>
-
-                                <button class="btn btn-danger btn-sm">
-                                    Delete
-                                </button>
-                            </div>
-                        </td>
-
-                    </tr>
-
-                </tbody>
-
-            </table>
+            <a href="{{ route('tasks.create') }}"
+               class="btn btn-success">
+                Add Task
+            </a>
 
         </div>
+    </nav>
+
+
+    <div class="container mt-4">
+
+        @yield('content')
 
     </div>
 
-</div>
 
-<nav class="mt-4">
-    <ul class="pagination justify-content-center">
+    {{-- Success Popup --}}
+    @if(session('success'))
 
-        <li class="page-item disabled">
-            <a class="page-link">Previous</a>
-        </li>
+        <div class="modal fade"
+             id="successModal"
+             tabindex="-1"
+             aria-labelledby="successModalLabel"
+             aria-hidden="true">
 
-        <li class="page-item active">
-            <a class="page-link">1</a>
-        </li>
+            <div class="modal-dialog modal-dialog-centered">
 
-        <li class="page-item">
-            <a class="page-link">2</a>
-        </li>
+                <div class="modal-content">
 
-        <li class="page-item">
-            <a class="page-link">Next</a>
-        </li>
+                    <div class="modal-header bg-success text-white">
 
-    </ul>
-</nav>
+                        <h5 class="modal-title"
+                            id="successModalLabel">
+                            Success
+                        </h5>
 
-@endsection
+                        <button type="button"
+                                class="btn-close btn-close-white"
+                                data-bs-dismiss="modal">
+                        </button>
+
+                    </div>
+
+                    <div class="modal-body text-center">
+
+                        <div class="fs-1 text-success mb-3">
+                            ✓
+                        </div>
+
+                        <h5>
+                            {{ session('success') }}
+                        </h5>
+
+                    </div>
+
+                    <div class="modal-footer">
+
+                        <button type="button"
+                                class="btn btn-success"
+                                data-bs-dismiss="modal">
+                            OK
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    @endif
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+
+    {{-- Automatically open success popup --}}
+    @if(session('success'))
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+
+                const successModal =
+                    new bootstrap.Modal(
+                        document.getElementById('successModal')
+                    );
+
+                successModal.show();
+
+            });
+        </script>
+
+    @endif
+
+</body>
+
+</html>
