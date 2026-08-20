@@ -7,7 +7,7 @@ form.addEventListener("submit", function (event) {
     const password = document.getElementById("password").value;
     const message = document.getElementById("message");
 
-    // Simple login validation
+
     if (username === "admin" && password === "1234") {
         message.style.color = "green";
         message.textContent = "Login Successful!";
