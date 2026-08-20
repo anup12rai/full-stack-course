@@ -7,19 +7,21 @@ use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
-    /**
+   public function index(){
+   $task = Task::all();
+   return $task;
+   return view('tasks.index', compact('stacks'));
+   }
+   /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        //
-    }
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
+        return view('tasks.create');
         //
     }
 
@@ -28,6 +30,13 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'title' => 'required|string|max:255|min:10',
+            'description' => 'nullable|string|max:1000',
+
+        ]);
+        Task::create($request->only('title', 'description'));
+        return redirect()->route('tasks.index')->with('success', 'Task created successfully.');
         //
     }
 
@@ -36,6 +45,7 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
+        return view('tasks.show', compact('task'));
         //
     }
 
@@ -44,6 +54,7 @@ class TaskController extends Controller
      */
     public function edit(Task $task)
     {
+        return view('tasks.edit', compact('task'));
         //
     }
 
@@ -52,6 +63,13 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task)
     {
+        $request->validate([
+            'title' => 'required|string|max:255|min:10',
+            'description' => 'nullable|string|max:1000',
+
+        ]);
+        $task->update($request->only('title', 'description'));
+        return redirect()->route('tasks.index')->with('success', 'Task updated successfully.');
         //
     }
 
@@ -60,6 +78,8 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
+        $task->delete();
+        return redirect()->route('tasks.index')->with('success', 'Task deleted successfully.');
         //
     }
 }
